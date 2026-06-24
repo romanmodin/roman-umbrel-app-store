@@ -1,9 +1,4 @@
 services:
-  app_proxy:
-    environment:
-      APP_HOST: roman-services_zwave-js-ui_1
-      APP_PORT: 8091
-
   zwave-js-ui:
     image: zwavejs/zwave-js-ui:latest
     restart: on-failure
