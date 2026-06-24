@@ -1,0 +1,16 @@
+manifestVersion: 1
+id: roman-services
+name: Roman Services
+tagline: Z-Wave JS UI and AirVPN helper
+category: automation
+version: "1.0.0"
+port: 8091
+description: Custom Z-Wave JS UI and AirVPN helper for Roman's Umbrel setup.
+developer: Roman
+website: https://github.com
+repo: https://github.com
+support: https://github.com
+gallery: []
+releaseNotes: Initial custom app.
+path: ""
+dependencies: []

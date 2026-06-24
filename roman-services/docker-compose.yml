@@ -1,0 +1,72 @@
+services:
+  app_proxy:
+    environment:
+      APP_HOST: roman-services_zwave-js-ui_1
+      APP_PORT: 8091
+
+  zwave-js-ui:
+    image: zwavejs/zwave-js-ui:latest
+    restart: on-failure
+    ports:
+      - "8091:8091"
+      - "3000:3000"
+    devices:
+      - "/dev/ttyACM0:/dev/ttyACM0"
+    volumes:
+      - zwave-js-ui_zwave-store:/usr/src/app/store
+    environment:
+      - TZ=America/Los_Angeles
+
+  airvpn:
+    image: lscr.io/linuxserver/wireguard:latest
+    restart: on-failure
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - /home/umbrel/airvpn/airvpn.conf:/config/wg_confs/airvpn.conf:ro
+      - /lib/modules:/lib/modules:ro
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+
+  datum-routing:
+    image: alpine:latest
+    restart: on-failure
+    network_mode: host
+    privileged: true
+    depends_on:
+      - airvpn
+    command: >
+      sh -c "
+      apk add --no-cache iproute2 iptables;
+      sleep 30;
+      ip route add default dev airvpn table 200 2>/dev/null || true;
+      ip rule add fwmark 1 table 200 2>/dev/null || true;
+      iptables -t mangle -F OUTPUT;
+      iptables -t mangle -A OUTPUT -p tcp --dport 22573 -j MARK --set-mark 1;
+      iptables -t mangle -A OUTPUT -p tcp --dport 8333 -j MARK --set-mark 1;
+      tail -f /dev/null
+      "
+
+  nut-upsd:
+    image: instantlinux/nut-upsd:latest
+    restart: on-failure
+    privileged: true
+    ports:
+      - "3493:3493"
+    environment:
+      - API_USER=upsmon
+      - API_PASSWORD=changeme
+      - DRIVER=usbhid-ups
+      - NAME=cyberpower
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"
+
+volumes:
+  zwave-js-ui_zwave-store:
+    external: true
