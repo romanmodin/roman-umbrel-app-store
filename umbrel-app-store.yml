@@ -1,2 +1,4 @@
 id: roman-umbrel-app-store
 name: Roman Umbrel Apps
+apps:
+  - roman-services
