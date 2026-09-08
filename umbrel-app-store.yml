@@ -2,3 +2,4 @@ id: roman
 name: Roman Umbrel Apps
 apps:
   - roman-services
+  - shrike-wallet
