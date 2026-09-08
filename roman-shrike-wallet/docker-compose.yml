@@ -1,13 +1,10 @@
-version: "3.7"
-
 services:
-  app_proxy:
-    environment:
-      APP_HOST: shrike-wallet_web_1
-      APP_PORT: 6080
-
   web:
+    build: .
     image: shrike-umbrel
     restart: on-failure
+    ports:
+      - '6080:6080'
     volumes:
       - ${APP_DATA_DIR}/data:/root/.sparrow
+    container_name: roman-shrike-wallet_web_1
