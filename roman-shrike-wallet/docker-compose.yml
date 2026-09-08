@@ -1,6 +1,5 @@
 services:
   web:
-    build: .
     image: ghcr.io/romanmodin/shrike-umbrel:latest
     restart: on-failure
     ports:
